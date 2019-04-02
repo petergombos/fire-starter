@@ -1,4 +1,5 @@
 import {useState, useEffect} from "react";
+import db from "../lib/db";
 
 function snapshotToData(snapshot) {
   return {
@@ -10,7 +11,8 @@ function snapshotToData(snapshot) {
 function useDocument(ref) {
   const [data, setData] = useState(null);
   useEffect(() => {
-    const unsubscribe = ref.onSnapshot(snapshot => {
+    const doc = typeof ref === "string" ? db.doc(ref) : ref;
+    const unsubscribe = doc.onSnapshot(snapshot => {
       setData(snapshotToData(snapshot));
     });
     return unsubscribe;

@@ -3,17 +3,17 @@ import {Form, Field} from "react-final-form";
 import {Link} from "@reach/router";
 
 import auth from "../lib/auth";
-import {Entries, CurrentUserEntries} from "../lib/refs";
+import db from "../lib/db";
 import useCollection from "../hooks/useCollection";
 import ctxAuth from "../components/AuthContext";
 
 function Home() {
   const {currentUser} = useContext(ctxAuth);
-  const entries = useCollection(CurrentUserEntries());
+  const entriesRef = db.col("/entries");
+  const entries = useCollection(entriesRef);
 
   async function handleSubmit(values) {
-    const payload = {...values, owner: currentUser.uid};
-    await Entries().add(payload);
+    await entriesRef.add(values);
   }
 
   return (
@@ -44,6 +44,8 @@ function Home() {
               <h2>{s.name}</h2>
             </Link>
             <div>{s.description}</div>
+            <div>Created: {new Date(s.createdAt).toString()}</div>
+            <div>Updated: {new Date(s.updatedAt).toString()}</div>
           </div>
         ))}
     </>

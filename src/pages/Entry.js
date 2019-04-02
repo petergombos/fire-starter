@@ -2,11 +2,11 @@ import React from "react";
 import {Form, Field} from "react-final-form";
 import {Link} from "@reach/router";
 
-import {EntryByID} from "../lib/refs";
+import db from "../lib/db";
 import useDocument from "../hooks/useDocument";
 
 function Entry({entryID}) {
-  const entryRef = EntryByID(entryID);
+  const entryRef = db.doc(`/entries/${entryID}`);
   const entry = useDocument(entryRef);
 
   if (!entry) {
@@ -15,7 +15,7 @@ function Entry({entryID}) {
 
   async function handleSubmit(values) {
     try {
-      await entryRef.set(values);
+      await entryRef.update(values);
     } catch (e) {
       return {[e.code]: e.message};
     }
